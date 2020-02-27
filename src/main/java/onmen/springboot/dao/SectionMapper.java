@@ -1,0 +1,15 @@
+package onmen.springboot.dao;
+
+import onmen.springboot.domain.Section;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface SectionMapper extends JpaRepository<Section,Long> {
+    List<Section> findAll();
+
+    List<Section> findAllByState(int state);
+
+}

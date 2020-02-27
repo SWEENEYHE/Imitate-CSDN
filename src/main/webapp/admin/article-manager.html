@@ -1,0 +1,181 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>文章管理</title>
+    <meta name="description" content="这是一个log页面">
+    <meta name="keywords" content="log">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="icon" type="image/png" href="/admin/assets/i/favicon.png">
+    <link rel="apple-touch-icon-precomposed" href="/admin/assets/i/app-icon72x72@2x.png">
+    <meta name="apple-mobile-web-app-title" content="Amaze UI"/>
+    <link rel="stylesheet" href="/admin/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/admin/assets/css/admin.css">
+</head>
+<body>
+<!--[if lte IE 9]>
+<p class="browsehappy">你正在使用<strong>过时</strong>的浏览器，Amaze UI 暂不支持。 请 <a href="http://browsehappy.com/" target="_blank">升级浏览器</a>
+    以获得更好的体验！</p>
+<![endif]-->
+
+<header class="am-topbar admin-header">
+    <div class="am-topbar-brand">
+        <strong>CSDN技术交流论坛</strong>
+        <small>后台管理</small>
+    </div>
+
+    <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
+            data-am-collapse="{target: '#topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span
+            class="am-icon-bars"></span></button>
+
+    <div class="am-collapse am-topbar-collapse" id="topbar-collapse">
+
+        <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list">
+            <li><a href="javascript:;"><span class="am-icon-envelope-o"></span> 收件箱 <span
+                    class="am-badge am-badge-warning">5</span></a></li>
+            <li class="am-dropdown" data-am-dropdown>
+                <a class="am-dropdown-toggle" data-am-dropdown-toggle href="javascript:;">
+                    <span class="am-icon-users"></span> 管理员 <span class="am-icon-caret-down"></span>
+                </a>
+                <ul class="am-dropdown-content">
+                    <li><a href="#"><span class="am-icon-user"></span> 资料</a></li>
+                    <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
+                    <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:;" id="admin-fullscreen"><span class="am-icon-arrows-alt"></span> 开启全屏</a></li>
+        </ul>
+    </div>
+</header>
+
+<div class="am-cf admin-main">
+    <!-- sidebar start -->
+    <div class="admin-sidebar">
+        <ul class="am-list admin-sidebar-list">
+            <li><a href="admin-index.html"><span class="am-icon-home"></span> 首页</a></li>
+            <li class="admin-parent">
+                <a class="am-cf" data-am-collapse="{target: '#collapse-nav'}"><span class="am-icon-file"></span> 用户相关管理
+                    <span class="am-icon-angle-right am-fr am-margin-right"></span></a>
+                <ul class="am-list am-collapse admin-sidebar-sub am-in" id="collapse-nav">
+                    <li><a href="/getAllUser?currentPage=1&pageSize=10"><span class="am-icon-male"></span> 用户管理</a></li>
+                    <li><a href="/getAllArticle?currenPage=1&pageSize=10"><span class="am-icon-briefcase"></span> 文章管理</a></li>
+                    <li><a href="/getAllComment?currenPage=1&pageSize=10"><span class="am-icon-calendar"></span> 评论管理</a></li>
+                </ul>
+            </li>
+
+            <li><a href="admin-table.html"><span class="am-icon-table"></span> 网站首页管理</a></li>
+            <li><a href="#"><span class="am-icon-sign-out"></span> 注销</a></li>
+        </ul>
+
+    </div>
+    <!-- sidebar end -->
+
+    <!-- content start -->
+
+    <div class="admin-content">
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">文章</strong> /
+                <small>文章管理</small>
+            </div>
+        </div>
+        <div class="am-g">
+            <div class="col-sm-12">
+                <table class="am-table am-table-striped am-table-hover table-main">
+                    <thead>
+                    <tr>
+                        <th class="table-check"><input type="checkbox"/></th>
+                        <th class="table-id">ID</th>
+                        <th class="table-title">标题</th>
+                        <th class="table-title">摘要</th>
+                        <th class="table-author">作者</th>
+                        <th class="table-date">修改日期</th>
+                        <th class="table-date">状态</th>
+                        <th class="table-set">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+    <tr th:each="item,state:${pageBean.pageItems}">
+        <td><input type="checkbox"/></td>
+        <td>[[${state.index+pageBean.pageSize*(pageBean.currentPage-1)+1}]]</td>
+        <td><a href="#">[[${item.title}]]</a></td>
+        <td>[[${item.summary}]]</td>
+        <td>[[${item.uname}]]</td>
+        <td>[[${item.time}]]</td>
+        <td th:if="${item.state==1}" style="color:#5eb95e;">正常</td>
+        <td th:if="${item.state==0}" style="color:red">待审核</td>
+        <td>
+            <div class="am-btn-toolbar">
+                <div class="am-btn-group am-btn-group-xs">
+                    <a class="am-btn am-btn-default am-btn-xs am-text-secondary" th:href="@{'/editor/editor.html'(aid=${item.aid})}"><span
+                            class="am-icon-pencil-square-o"></span> 编辑
+                    </a>
+                    <a class="am-btn am-btn-default am-btn-xs am-text-success"  th:href="@{'/setArticleById?state=1&id='+${item.aid}}"><span
+                            class="am-icon-wrench"></span>过审
+                    </a>
+                    <a class="am-btn am-btn-default am-btn-xs am-text-danger"  th:href="@{'/setArticleById?state=0&id='+${item.aid}}"><span
+                            class="am-icon-magic"></span>封禁
+                    </a>
+                    <a class="am-btn am-btn-default am-btn-xs am-text-danger"  th:href="@{'/deleteArticleById?id='+${item.aid}}"><span
+                            class="am-icon-trash-o"></span> 删除
+                    </a>
+                </div>
+            </div>
+        </td>
+    </tr>
+                    </tbody>
+                </table>
+                <div class="am-cf">
+                    共 [[${pageBean.totalItem}]] 条记录
+                    <div class="am-fr">
+                        <ul class="am-pagination">
+                                <li th:if="${pageBean.currentPage<=1}" class="am-disabled">
+                                    <a th:href="@{'/getAllArticle'(currentPage=${pageBean.currentPage},pageSize=10)}">«</a>
+                                </li>
+
+                                <li th:if="${pageBean.currentPage>1}">
+                                    <a th:href="@{'/getAllArticle'(currentPage=${pageBean.currentPage-1},pageSize=10)}">«</a>
+                                </li>
+                            <t th:each="index:${#numbers.sequence(1,pageBean.pageCount)}" class="am-pagination blank-tag">
+                                <li th:if = "${pageBean.currentPage==index}" class="am-active">
+                                    <a th:href="@{'/getAllArticle'(currentPage=${index},pageSize=10)}">[[${index}]]</a>
+                                </li>
+                                <li th:if ="${pageBean.currentPage!=index}">
+                                    <a th:href="@{'/getAllArticle'(currentPage=${index},pageSize=10)}">[[${index}]]</a>
+                                </li>
+                            </t>
+
+
+                                <li th:if="${pageBean.currentPage>=pageBean.pageCount}" class="am-disabled">
+                                    <a th:href="@{'/getAllArticle'(currentPage=${pageBean.currentPage},pageSize=10)}">»</a>
+                                </li>
+
+
+                                <li th:if="${pageBean.currentPage<pageBean.pageCount}">
+                                    <a th:href="@{'/getAllArticle'(currentPage=${pageBean.currentPage+1},pageSize=10)}">»</a>
+                                </li>
+                        </ul>
+                    </div>
+                </div>
+                <hr/>
+            </div>
+        </div>
+        <hr/>
+    </div>
+    <!-- content end -->
+
+</div>
+
+<footer>
+    <hr>
+    <p class="am-padding-left">© 2019 CSDN SWEENEY_HE.</p>
+</footer>
+
+
+<script src="/admin/assets/js/zepto.min.js"></script>
+<script src="/admin/assets/js/amazeui.min.js"></script>
+<script src="/admin/assets/js/app.js"></script>
+</body>
+</html>

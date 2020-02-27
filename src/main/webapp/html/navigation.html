@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="../css/main.css">
+<!--导航栏-->
+<div class="nav-container">
+    <div class="nav">
+        <ul class="nav-ul">
+            <li><img src="../img/csdnlogo.png"></li>
+            <li><a href="/html/index.html" target="_parent" style="border-bottom: 2px solid #CA0C16;">首页</a></li>
+            <li><a>博客</a></li>
+            <li><a>兴趣</a></li>
+            <li><a>学院</a></li>
+            <li><a>下载</a></li>
+            <li><a>论坛</a></li>
+            <li><a>APP</a></li>
+            <li><a>问答</a></li>
+            <li><a>商城</a></li>
+            <li><a>活动</a></li>
+            <li><a>VIP会员</a></li>
+            <li><a>专题</a></li>
+            <li><a>招聘</a></li>
+            <li><a>ITeye</a></li>
+            <li><a>GitChat</a></li>
+            <li><a>图文课</a></li>
+        </ul>
+    </div>
+
+
+    <div class="nav-left">
+        <div class="nav-left-inner-left">
+            <div class="search-bar">
+                <!-- <a>
+                     <img src="//csdnimg.cn/cdn/content-toolbar/csdn-search.png" class="search-img">
+                 </a>-->
+                <input type="text" class="input-search" name="" value="" placeholder="搜CSDN" autocomplete="off">
+            </div>
+        </div>
+        <div class="nav-left-inner-right">
+            <ul id="nav-right-ul" class="nav-ul nav-left-ul">
+                <li><a href="/editor/editor.html" target="_parent">写博客</a></li>
+                <li><a>消息</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="down">
+        <div class="dropdown-content">
+            <ul>
+                <li><a href="/editorUserInfo" target="_parent">个人中心</a></li>
+                <li><a href="javascript:logout()">退出登陆</a></li>
+            </ul>
+        </div>
+    </div>
+
+
+</div>
+
+<script src="../js/jquery-1.12.1.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script>
+
+$(function () {
+    askLoinState();
+});
+    //请求登陆状态
+    function askLoinState() {
+        $.get(
+            "/askLoginState"
+            ,{}
+            ,function (data) {
+                if(data.uname==""){
+                    $(".dropdown").attr("class","down");
+                    $("#nav-right-ul").append(' <li><a href="/html/register.html" target="_parent">注册</a></li> <li><a href="/html/login.html" target="_parent">登陆</a></li>');
+                }else{
+                    $(".down").attr("class","dropdown");
+                    var html = $(".dropdown").html();
+                    $(".dropdown").html(html+'<img style="width: 30px;height: 30px; border-radius: 100%;" src="/img/head_icon/'+data.img+'">');
+                }
+            }
+        )
+    }
+
+    function logout() {
+        $.post(
+            "/logout"
+            ,{}
+            ,function (data) {
+                if(data=='1'){
+                    window.open("/html/index.html","_parent");
+                }else{
+                    alert("页面没有同步，您尚未登陆");
+                    window.open("/html/index.html","_parent");
+                }
+            }
+        )
+    }
+
+
+
+</script>
+<!--导航栏结束-->
+

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>写文章</title>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <link rel="stylesheet" href="fontAwesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="richEditor.css">
+    <script src="/js/jquery-1.12.1.min.js"></script>
+    <style>
+        * {
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'microsoft yahei';
+            background-color: #f5f6f7;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        #editor {
+            margin: 30px auto;
+            background-color: #FFFFFF;
+        }
+
+        #content-container {
+            padding: 15px;
+            margin-top: 25px;
+            width: 100%;
+            height: 75%;
+        }
+
+        #title-content {
+            width: 99%;
+            height: 50px;
+            border-radius: 5px;
+            margin-left: 5px;
+            margin-top: 10px;
+            margin-bottom: -5px;
+        }
+
+        #title-input {
+            border: none;
+            width: 100%;
+            height: 100%;
+            font-size: 30px;
+            background-color: #f5f6f7;
+        }
+
+        .container{
+            margin-left: 20%;
+            width: 60%;
+            height: 125%;
+            background-color: #FFFFFF;
+
+        }
+
+        .bottom-container{
+            padding: 20px;
+            display: inline-block;
+            width: 100%;
+            height:100px;
+
+        }
+
+        .category{
+            width:100%;
+            height:100px;
+        }
+        .div-select{
+            display: inline-block;
+            width: 155px;
+            height:50px;
+            border: #e3e3e3 solid 1px;
+            margin-left: 10px;
+        }
+        .category-tag{
+            display: inline-block;
+            font-size:20px;
+        }
+
+        #sectionId{
+            width: 100%;
+            height:100%;
+            border: none;
+            font-size: 20px;
+        }
+
+        .button-submit{
+            margin-left: 15%;
+            cursor: pointer;
+            display: inline-block;
+            line-height: 30px;
+            color: #ffffff;
+            width: 150px;
+            height: 50px;
+            border: 1px solid #ca0c16;
+            background-color: #ca0c16;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 20px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<!--导航栏-->
+<iframe name="" frameborder="0" scrolling="no" marginwidth="0" marginheight="0" width="100%" height="38px"
+        src="../html/navigation.html"></iframe>
+<!--导航栏结束-->
+
+<div class="container">
+    <div id="content-container">
+        <div id="title-content"><input id="title-input" name="title" value="" placeholder="输入文章标题"></div>
+        <div id="editor">
+        </div>
+    </div>
+    <!--底部容器-->
+    <div class="bottom-container">
+        <div class="category">
+            <div class="category-tag">文章分类</div>
+            <div class="div-select">
+                    <select id="sectionId" name="sectionId">
+                        <option value="0">选择文章分类</option>
+                    </select>
+            </div>
+            <div class="button-submit" onclick="uploadArticle()">
+                发布文章
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="richEditor.min.js"></script>
+<script>
+
+
+
+
+var editor;
+    $(function () {
+        var width = $(window).width()*0.6-40;
+        var height = $(window).height()*0.8;
+         editor = initRichEditor(width,height);
+        initselectOption();
+        isEditArticle();
+    });
+
+
+    //判断是否为修改旧文章
+    function isEditArticle(){
+        //根据url的参数判断
+        var aid = parseInt(getUrlParam("aid"));
+        //如果是修改文章
+        if(aid!=null){
+            //请求原始文章信息
+            $.get(
+                "/findEditorArticle"
+                ,{"aid":aid}
+                ,function (data) {
+                    $("#title-input").val(data.title);
+                    $(".re-editor").html(data.content);
+                    $("#sectionId").val(data.sectionId);
+
+                    $(".button-submit").html("保存文章");
+                    //修改提交的url
+                    $(".button-submit").attr("onclick","uploadArticle("+aid+")");
+                }
+            )
+        }
+    }
+
+//获取url中的参数
+function getUrlParam(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
+    var r = window.location.search.substr(1).match(reg);  //匹配目标参数
+    if (r != null) return unescape(r[2]); return null; //返回参数值
+}
+
+    function initRichEditor(width, height) {
+        return new RichEditor("#editor", {
+            width: width,
+            height: height,
+            toolBg: "#eee",
+            buttons: {
+                heading: {
+                    title: "标题",
+                    icon: "\uf1dc"
+                },
+                code: {
+                    title: "引用",
+                    icon: "\uf10d"
+                },
+                bold: {
+                    title: "加粗",
+                    icon: "\uf032"
+                },
+                italic: {
+                    title: "斜体",
+                    icon: "\uf033"
+                },
+                underline: {
+                    title: "下划线",
+                    icon: "\uf0cd"
+                },
+                strikethrough: {
+                    title: "删除线",
+                    icon: "\uf0cc"
+                },
+                foreColor: {
+                    title: "字体颜色",
+                    icon: "\uf1fc"
+                },
+                backColor: {
+                    title: "背景色",
+                    icon: "\uf043"
+                },
+                justifyLeft: {
+                    title: "居左",
+                    icon: "\uf036"
+                },
+                justifyCenter: {
+                    title: "居中",
+                    icon: "\uf037"
+                },
+                justifyRight: {
+                    title: "居右",
+                    icon: "\uf038"
+                },
+                justifyFull: {
+                    title: "两端对齐",
+                    icon: "\uf039"
+                },
+                insertOrderedList: {
+                    title: "有序列表",
+                    icon: "\uf0cb"
+                },
+                insertUnorderedList: {
+                    title: "无序列表",
+                    icon: "\uf0ca"
+                },
+                indent: {
+                    title: "indent",
+                    icon: "\uf03c"
+                },
+                outdent: {
+                    title: "outdent",
+                    icon: "\uf03b"
+                },
+                createLink: {
+                    title: "链接",
+                    icon: "\uf0c1"
+                },
+                insertImage: {
+                    title: "插入图片",
+                    icon: "\uf03e"
+                },
+                emotion: {
+                    title: "表情",
+                    icon: "\uf118"
+                },
+                fullscreen: {
+                    title: "全屏",
+                    icon: "\uf066"
+                },
+                save: {
+                    title: "保存",
+                    icon: "\uf0c7",
+                    click: function () {
+                        console.log(editor.getHTML());
+                    }
+                }
+            }
+        });
+    }
+
+    //自适应
+   $(window).resize(function () {
+        width = $(window).width()*0.6-40;
+        height = $(window).height()*0.8;
+
+       $("#editor").width(width);
+       $("#editor").height(height);
+   })
+    function uploadArticle(aid) {
+        //提交文章
+        $.post(
+            "/saveArticle"
+            , {"aid":aid,"title": $("#title-input").val(), "content": editor.getHTML(), "sectionId": $("#sectionId").val()}
+            , function (data) {
+                if(data=='-1'){
+                    alert("服务器故障");
+                }else{
+                    alert("提交成功");
+                    window.location.href= "/findArticleById?id="+data;
+                }
+            }
+        );
+    }
+    //请求文章分类数据
+    function initselectOption() {
+        $.post(
+            "/getAllSection"
+            ,{}
+            ,function (jsonArray) {
+                var optionItem = "";
+                for(var i in jsonArray){
+                    optionItem = "<option value='"+jsonArray[i].sid+"'>"+jsonArray[i].sname+"</option>";
+                    $("#sectionId").append(optionItem);
+                }
+            }
+        );
+    }
+
+</script>
+</body>
+</html>
